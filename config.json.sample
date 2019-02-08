@@ -1,0 +1,18 @@
+{
+    "subjects": [
+        {
+            "name": "",
+            "spreadsheet": {
+                "id": "",
+                "sheet": "",
+                "range": ""
+            },
+            "response-map": "standard"
+        }
+    ],
+    "response-map": {
+        "standard": {
+            "1": "DivergentBarChart"
+        }
+    }
+}
