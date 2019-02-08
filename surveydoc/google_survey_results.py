@@ -1,24 +1,11 @@
-
-from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
 import pandas as pd
 from datetime import datetime
+from googleapiclient.discovery import build
 
 
 class GoogleSurveyResultsRepository():
-    # If modifying these scopes, delete the file token.json.
-    SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-
-    def __init__(self):
-        store = file.Storage('token.json')
-        creds = store.get()
-
-        if not creds or creds.invalid:
-            flow = client.flow_from_clientsecrets('credentials.json', self.SCOPES)
-            creds = tools.run_flow(flow, store)
-
-        self.service = build('sheets', 'v4', http=creds.authorize(Http()))
+    def __init__(self, credentials):
+        self.service = build('sheets', 'v4', credentials=credentials)
 
     def get_survey_results(self, spreadsheetId, sheet, dataRange):
         result = self.service.spreadsheets().values().get(spreadsheetId=spreadsheetId,

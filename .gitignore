@@ -1,7 +1,7 @@
 # Repo specific ignores
 node_modules
 credentials.json
-token.json
+token.pickle
 config.json
 
 # -------------------------------
