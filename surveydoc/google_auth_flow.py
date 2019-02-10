@@ -9,7 +9,7 @@ from google.auth.transport.requests import Request
 def authenticate(credentials_path):
     scopes = [
         'https://www.googleapis.com/auth/spreadsheets.readonly',
-        'https://www.googleapis.com/auth/documents.readonly'
+        'https://www.googleapis.com/auth/documents'
     ]
 
     creds = None

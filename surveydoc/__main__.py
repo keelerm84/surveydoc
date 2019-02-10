@@ -2,6 +2,7 @@ import sys
 import click
 import json
 from .google_survey_results import GoogleSurveyResultsRepository
+from .google_doc_writer import GoogleDocWriter
 from .chart_writer import ChartWriter
 from .google_auth_flow import authenticate
 
@@ -15,11 +16,13 @@ def main(credentials_path, config_path):
     config = json.load(config_path)
     config_path.close()
 
-    surveyResultsRepository = GoogleSurveyResultsRepository(credentials)
+    survey_results_repository = GoogleSurveyResultsRepository(credentials)
     chart_writer = ChartWriter()
 
     for subject_config in config['subjects']:
-        data = surveyResultsRepository.get_survey_results(
+        doc_writer = GoogleDocWriter(credentials)
+
+        data = survey_results_repository.get_survey_results(
             subject_config['spreadsheet']['id'],
             subject_config['spreadsheet']['sheet'],
             subject_config['spreadsheet']['range']
@@ -31,7 +34,18 @@ def main(credentials_path, config_path):
             style = response_map.get(str(idx), "Ignore")
 
             if style == 'DivergentBarChart':
-                chart_writer.generate_chart(subject_config['name'], data['answers']['Timestamp'], data['answers'][header], header)
+                image_path = chart_writer.generate_chart(subject_config['name'], data['answers']['Timestamp'], data['answers'][header], header)
+                doc_writer.divergent_bar_chart(header, image_path)
+            elif style == "TextSummary":
+                # TODO(mmk) We should probably have a separate class that
+                # handles finding the right splice of answers and returns a
+                # simple new line separated list of responses (having removed
+                # all empty responses and randomized the answers)
+                answers = data['answers'][header]
+                answers.apply(str)
+                doc_writer.text_summary(header, answers.values)
+
+        doc_writer.generate_doc("Testing API")
 
 
 if __name__ == '__main__':

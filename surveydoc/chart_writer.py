@@ -40,7 +40,10 @@ class ChartWriter():
             os.mkdir(subject)
 
         translation_table = str.maketrans("", "", punctuation)
-        pio.write_image(figure, '{0}/{1}.png'.format(subject, question.translate(translation_table)), scale=1, height=30 * len(frequencies))
+        image_path = '{0}/{1}.png'.format(subject, question.translate(translation_table))
+        pio.write_image(figure, image_path, scale=1, height=30 * len(frequencies))
+
+        return image_path
 
     def _add_bar(self, figure, values, months, fill_color):
         figure.add_bar(
