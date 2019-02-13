@@ -22,6 +22,8 @@ class GoogleDocWriter():
         document = self.service.documents().create(body={"title": title}).execute()
         self.service.documents().batchUpdate(documentId=document['documentId'], body={'requests': self.requests}).execute()
 
+        return document['documentId']
+
     def divergent_bar_chart(self, question, image_path):
         self.insert_text(question)
         self.change_style("HEADING_1", "START")

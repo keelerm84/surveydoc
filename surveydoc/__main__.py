@@ -1,10 +1,10 @@
-import sys
 import click
 import json
 from .google_survey_results import GoogleSurveyResultsRepository
 from .google_doc_writer import GoogleDocWriter
 from .chart_writer import ChartWriter
 from .google_auth_flow import authenticate
+from .google_drive_manager import GoogleDriveManager
 
 
 @click.command()
@@ -16,6 +16,7 @@ def main(credentials_path, config_path):
     config = json.load(config_path)
     config_path.close()
 
+    google_drive_manager = GoogleDriveManager(credentials)
     survey_results_repository = GoogleSurveyResultsRepository(credentials)
     chart_writer = ChartWriter()
 
@@ -35,7 +36,7 @@ def main(credentials_path, config_path):
 
             if style == 'DivergentBarChart':
                 image_path = chart_writer.generate_chart(subject_config['name'], data['answers']['Timestamp'], data['answers'][header], header)
-                doc_writer.divergent_bar_chart(header, image_path)
+                document_id = doc_writer.divergent_bar_chart(header, image_path)
             elif style == "TextSummary":
                 # TODO(mmk) We should probably have a separate class that
                 # handles finding the right splice of answers and returns a
@@ -45,7 +46,8 @@ def main(credentials_path, config_path):
                 answers.apply(str)
                 doc_writer.text_summary(header, answers.values)
 
-        doc_writer.generate_doc("Testing API")
+        document_id = doc_writer.generate_doc("Testing API")
+        google_drive_manager.move_doc_to_folder(document_id, subject_config['drive_folder'])
 
 
 if __name__ == '__main__':
