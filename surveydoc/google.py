@@ -1,8 +1,45 @@
+import os
+import json
+import pickle
+import os.path
+import pandas as pd
+from datetime import datetime
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
-import base64
 
 
-class GoogleDocWriter():
+def authenticate(credentials_path):
+    scopes = [
+        'https://www.googleapis.com/auth/documents',
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/spreadsheets.readonly'
+    ]
+
+    creds = None
+    # The file token.pickle stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                credentials_path, scopes)
+            creds = flow.run_local_server()
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+
+    return creds
+
+
+class DocWriter():
     def __init__(self, credentials):
         self.service = build('docs', 'v1', credentials=credentials)
 
@@ -28,7 +65,7 @@ class GoogleDocWriter():
         self.insert_text(question)
         self.change_style("HEADING_1", "START")
 
-        self.insert_image(image_path)
+        # self.insert_image(image_path)
 
         self.insert_text("Comments")
         self.change_style("HEADING_2", "START")
@@ -40,6 +77,9 @@ class GoogleDocWriter():
 
         self.insert_text("\n".join(answers))
         self.change_to_bullets()
+
+        self.insert_text("Comments")
+        self.change_style("HEADING_2", "START")
 
     def insert_text(self, text):
         content_length = len(text.encode('utf-16-le')) / 2 + 1  # Adding 1 for the newline
@@ -54,10 +94,37 @@ class GoogleDocWriter():
         self.requests.append({"updateParagraphStyle": {"range": self.last_range(), "paragraphStyle": {"namedStyleType": style, "alignment": alignment}, "fields": "namedStyleType,alignment"}})
 
     def insert_image(self, image_path):
-        print(image_path)
         self.requests.append({"insertInlineImage": {"uri": image_path, "location": {"index": self.index}}})
         self.last_index = self.index
         self.index += 1
 
     def last_range(self):
         return {"startIndex": self.last_index, "endIndex": self.index}
+
+
+class DriveManager():
+    def __init__(self, credentials):
+        self.service = build('drive', 'v3', credentials=credentials)
+
+    def move_doc_to_folder(self, file_id, folder_id):
+        uploaded_file = self.service.files().get(fileId=file_id, fields='parents').execute()
+        previous_parents = ','.join(uploaded_file['parents'])
+
+        self.service.files().update(fileId=file_id, addParents=folder_id, removeParents=previous_parents).execute()
+
+
+class SurveyResultsRepository():
+    def __init__(self, credentials):
+        self.service = build('sheets', 'v4', credentials=credentials)
+
+    def get_survey_results(self, spreadsheetId, sheet, dataRange):
+        result = self.service.spreadsheets().values().get(spreadsheetId=spreadsheetId,
+                                                          range=f"{sheet}!{dataRange}").execute()
+
+        values = result.get('values', [])
+        questions = values[0]
+        responses = pd.DataFrame(data=values[1:], columns=questions)
+        responses["Timestamp"] = responses["Timestamp"].apply(
+            lambda timestamp: datetime.strptime(timestamp, "%B %Y").strftime("%Y%m"))
+
+        return {'questions': questions, 'answers': responses}

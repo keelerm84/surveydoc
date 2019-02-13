@@ -1,10 +1,7 @@
 import click
 import json
-from .google_survey_results import GoogleSurveyResultsRepository
-from .google_doc_writer import GoogleDocWriter
+from .google import authenticate, SurveyResultsRepository, DocWriter, DriveManager
 from .formatters import DivergentBarChart, RecentResponses
-from .google_auth_flow import authenticate
-from .google_drive_manager import GoogleDriveManager
 
 
 @click.command()
@@ -16,15 +13,15 @@ def main(credentials_path, config_path):
     config = json.load(config_path)
     config_path.close()
 
-    google_drive_manager = GoogleDriveManager(credentials)
-    survey_results_repository = GoogleSurveyResultsRepository(credentials)
+    drive_manager = DriveManager(credentials)
+    survey_results_repository = SurveyResultsRepository(credentials)
     divergent_bar_chart = DivergentBarChart()
     recent_responses = RecentResponses()
 
     for subject_config in config['subjects']:
-        doc_writer = GoogleDocWriter(credentials)
+        doc_writer = DocWriter(credentials)
 
-        data = survey_results_repository.get_survey_results(
+        survey_results = survey_results_repository.get_survey_results(
             subject_config['spreadsheet']['id'],
             subject_config['spreadsheet']['sheet'],
             subject_config['spreadsheet']['range']
@@ -32,18 +29,18 @@ def main(credentials_path, config_path):
 
         response_map = config['response-map'][subject_config['response-map']]
 
-        for idx, header in enumerate(data['headers']):
+        for idx, question in enumerate(survey_results['questions']):
             style = response_map.get(str(idx), "Ignore")
 
             if style == 'DivergentBarChart':
-                image_path = divergent_bar_chart.generate(subject_config['name'], data['answers']['Timestamp'], data['answers'][header], header)
-                document_id = doc_writer.divergent_bar_chart(header, image_path)
+                image_path = divergent_bar_chart.generate(subject_config['name'], survey_results['answers']['Timestamp'], survey_results['answers'][question], question)
+                doc_writer.divergent_bar_chart(question, image_path)
             elif style == "TextSummary":
-                answers = recent_responses.filter(data['answers']['Timestamp'], data['answers'][header])
-                doc_writer.text_summary(header, answers)
+                answers = recent_responses.filter(survey_results['answers']['Timestamp'], survey_results['answers'][question])
+                doc_writer.text_summary(question, answers)
 
         document_id = doc_writer.generate_doc("Testing API")
-        google_drive_manager.move_doc_to_folder(document_id, subject_config['drive_folder'])
+        drive_manager.move_doc_to_folder(document_id, subject_config['drive_folder'])
 
 
 if __name__ == '__main__':
