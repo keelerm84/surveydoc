@@ -2,7 +2,7 @@ import click
 import json
 from .google_survey_results import GoogleSurveyResultsRepository
 from .google_doc_writer import GoogleDocWriter
-from .chart_writer import ChartWriter
+from .formatters import DivergentBarChart, RecentResponses
 from .google_auth_flow import authenticate
 from .google_drive_manager import GoogleDriveManager
 
@@ -18,7 +18,8 @@ def main(credentials_path, config_path):
 
     google_drive_manager = GoogleDriveManager(credentials)
     survey_results_repository = GoogleSurveyResultsRepository(credentials)
-    chart_writer = ChartWriter()
+    divergent_bar_chart = DivergentBarChart()
+    recent_responses = RecentResponses()
 
     for subject_config in config['subjects']:
         doc_writer = GoogleDocWriter(credentials)
@@ -35,16 +36,11 @@ def main(credentials_path, config_path):
             style = response_map.get(str(idx), "Ignore")
 
             if style == 'DivergentBarChart':
-                image_path = chart_writer.generate_chart(subject_config['name'], data['answers']['Timestamp'], data['answers'][header], header)
+                image_path = divergent_bar_chart.generate(subject_config['name'], data['answers']['Timestamp'], data['answers'][header], header)
                 document_id = doc_writer.divergent_bar_chart(header, image_path)
             elif style == "TextSummary":
-                # TODO(mmk) We should probably have a separate class that
-                # handles finding the right splice of answers and returns a
-                # simple new line separated list of responses (having removed
-                # all empty responses and randomized the answers)
-                answers = data['answers'][header]
-                answers.apply(str)
-                doc_writer.text_summary(header, answers.values)
+                answers = recent_responses.filter(data['answers']['Timestamp'], data['answers'][header])
+                doc_writer.text_summary(header, answers)
 
         document_id = doc_writer.generate_doc("Testing API")
         google_drive_manager.move_doc_to_folder(document_id, subject_config['drive_folder'])

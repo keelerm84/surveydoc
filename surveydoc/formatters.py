@@ -8,8 +8,8 @@ import os
 pio.orca.config.executable = './node_modules/orca/bin/orca.js'
 
 
-class ChartWriter():
-    def generate_chart(self, subject, timestamps, answers, question):
+class DivergentBarChart():
+    def generate(self, subject, timestamps, answers, question):
         answers = answers.apply(lambda x: int(x) if x != '' and x is not None else 0)
         answers = answers[answers > 0]
         frequencies = pd.crosstab(timestamps, answers, normalize='index')
@@ -55,3 +55,10 @@ class ChartWriter():
                 line=None
             )
         )
+
+
+class RecentResponses():
+    def filter(self, timestamps, answers):
+        indexes = timestamps.loc[timestamps == timestamps.iloc[-1]].index
+        answers = answers[indexes]
+        return answers[answers.apply(lambda x: len(x) > 0)]
