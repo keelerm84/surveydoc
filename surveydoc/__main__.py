@@ -1,5 +1,6 @@
 import click
 import json
+from datetime import datetime
 from .google import authenticate, SurveyResultsRepository, DocWriter, DriveManager
 from .formatters import DivergentBarChart, RecentResponses
 from .aws import S3
@@ -42,7 +43,7 @@ def main(credentials_path, config_path):
                 answers = recent_responses.filter(survey_results['answers']['Timestamp'], survey_results['answers'][question])
                 doc_writer.text_summary(question, answers)
 
-        document_id = doc_writer.generate_doc("Testing API")
+        document_id = doc_writer.generate_doc("{}, {}".format(subject_config['name'], datetime.now().strftime("%B %Y")))
         drive_manager.move_doc_to_folder(document_id, subject_config['drive_folder'])
 
 

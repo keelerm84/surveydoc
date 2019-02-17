@@ -50,7 +50,7 @@ class DocWriter():
         self.insert_text(subject)
         self.change_style("TITLE", "CENTER")
 
-        self.insert_text("Survey Results: {}".format(datetime.now().strftime("%Y-%m-%d")))
+        self.insert_text("Survey Results: {}".format(datetime.now().strftime("%B %Y")))
         self.change_style("SUBTITLE", "CENTER")
 
         self.insert_text("Overview and Explanation")
