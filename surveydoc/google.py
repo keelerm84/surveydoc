@@ -40,12 +40,18 @@ def authenticate(credentials_path):
 
 
 class DocWriter():
-    def __init__(self, credentials):
+    def __init__(self, credentials, subject):
         self.service = build('docs', 'v1', credentials=credentials)
 
         self.index = 1
         self.last_index = 1
         self.requests = []
+
+        self.insert_text(subject)
+        self.change_style("TITLE", "CENTER")
+
+        self.insert_text("Survey Results: {}".format(datetime.now().strftime("%Y-%m-%d")))
+        self.change_style("SUBTITLE", "CENTER")
 
         self.insert_text("Overview and Explanation")
         self.change_style("HEADING_1", "START")
@@ -65,7 +71,8 @@ class DocWriter():
         self.insert_text(question)
         self.change_style("HEADING_1", "START")
 
-        # self.insert_image(image_path)
+        self.insert_image(image_path)
+        self.insert_text("")  # Inserting a blank line to make sure the image isn't completely inline.
 
         self.insert_text("Comments")
         self.change_style("HEADING_2", "START")

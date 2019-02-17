@@ -2,6 +2,7 @@ import click
 import json
 from .google import authenticate, SurveyResultsRepository, DocWriter, DriveManager
 from .formatters import DivergentBarChart, RecentResponses
+from .aws import S3
 
 
 @click.command()
@@ -17,9 +18,10 @@ def main(credentials_path, config_path):
     survey_results_repository = SurveyResultsRepository(credentials)
     divergent_bar_chart = DivergentBarChart()
     recent_responses = RecentResponses()
+    s3 = S3(config['s3']['bucket'], config['s3']['directory'])
 
     for subject_config in config['subjects']:
-        doc_writer = DocWriter(credentials)
+        doc_writer = DocWriter(credentials, subject_config['name'])
 
         survey_results = survey_results_repository.get_survey_results(
             subject_config['spreadsheet']['id'],
@@ -34,7 +36,8 @@ def main(credentials_path, config_path):
 
             if style == 'DivergentBarChart':
                 image_path = divergent_bar_chart.generate(subject_config['name'], survey_results['answers']['Timestamp'], survey_results['answers'][question], question)
-                doc_writer.divergent_bar_chart(question, image_path)
+                s3_path = s3.write_to_s3(image_path)
+                doc_writer.divergent_bar_chart(question, s3_path)
             elif style == "TextSummary":
                 answers = recent_responses.filter(survey_results['answers']['Timestamp'], survey_results['answers'][question])
                 doc_writer.text_summary(question, answers)

@@ -11,6 +11,10 @@
             "response-map": "standard"
         }
     ],
+    "s3": {
+        "bucket": "",
+        "directory": ""
+    },
     "response-map": {
         "standard": {
             "1": "DivergentBarChart"
