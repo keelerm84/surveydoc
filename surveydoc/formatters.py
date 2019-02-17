@@ -1,3 +1,5 @@
+import tempfile
+import uuid
 import pandas as pd
 from datetime import datetime
 import plotly.graph_objs as go
@@ -40,8 +42,9 @@ class DivergentBarChart():
             os.mkdir(subject)
 
         translation_table = str.maketrans("", "", punctuation)
-        image_path = '{0}/{1}.png'.format(subject, question.translate(translation_table))
-        pio.write_image(figure, image_path, scale=1, height=30 * len(frequencies))
+
+        image_path = "{}.png".format(os.path.join(tempfile.mkdtemp(), str(uuid.uuid4())))
+        pio.write_image(figure, image_path, format='png', scale=1, height=30 * len(frequencies))
 
         return image_path
 
