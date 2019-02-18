@@ -58,7 +58,6 @@ class DocWriter():
 
         self.insert_text("Below, you will find several graphs visualizing the results of your most recent survey. Each question is broken out into a separate graph for easier comparison against previous survey results.")
         self.insert_text("The graph we are using is a diverging bar chart. In this graph, anything to the right of the middle line is a positive response; anything to the left, negative. This is done to more accurately reflect the shifting sentiment of the team instead of hiding the details behind a contrived 'average' score.")
-        self.insert_text("For each graph, the following legend holds.")
         self.insert_text("Under each section, I have reserved some space for analysis, comments or action items that might arise from our one-on-one review of these results. Please make sure anything you want captured on this document has been recorded to your satisfaction.")
 
     def generate_doc(self, title):

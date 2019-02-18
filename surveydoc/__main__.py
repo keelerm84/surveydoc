@@ -44,7 +44,7 @@ def main(credentials_path, config_path):
                 doc_writer.text_summary(question, answers)
 
         document_id = doc_writer.generate_doc("{}, {}".format(subject_config['name'], datetime.now().strftime("%B %Y")))
-        drive_manager.move_doc_to_folder(document_id, subject_config['drive_folder'])
+        drive_manager.move_doc_to_folder(document_id, subject_config['drive-folder'])
 
 
 if __name__ == '__main__':
