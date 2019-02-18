@@ -64,4 +64,4 @@ class RecentResponses():
     def filter(self, timestamps, answers):
         indexes = timestamps.loc[timestamps == timestamps.iloc[-1]].index
         answers = answers[indexes]
-        return answers[answers.apply(lambda x: len(x) > 0)]
+        return answers[answers.apply(lambda x: x is not None and len(x) > 0)]
