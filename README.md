@@ -86,7 +86,7 @@ in the format February 2019.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE)
 file for details
 
 
