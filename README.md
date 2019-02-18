@@ -32,6 +32,7 @@ requirements.txt file.
 virtualenv --clear .env
 . .env/bin/activate
 pip install -r requirements.txt
+yarn install
 python -m surveydoc
 ```
 
