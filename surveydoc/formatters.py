@@ -25,7 +25,9 @@ class DivergentBarChart():
 
         figure = go.Figure(layout=go.Layout(barmode='stack', title=None, margin=dict(b=0, t=0), showlegend=False,
                                             xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
-                                            yaxis=dict(autorange=True), autosize=True))
+                                            yaxis=dict(autorange=True), autosize=True,
+                                            plot_bgcolor='rgba(0,0,0,0)',
+                                            paper_bgcolor='rgba(0,0,0,0)'))
 
         colors = [
             'rgba(255, 255, 255, 1)',
