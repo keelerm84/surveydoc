@@ -41,6 +41,8 @@ def main(credentials_path, config_path):
                 doc_writer.divergent_bar_chart(question, s3_path)
             elif style == "TextSummary":
                 answers = recent_responses.filter(survey_results['answers']['Timestamp'], survey_results['answers'][question])
+                answers = answers.sample(frac=1)
+
                 doc_writer.text_summary(question, answers)
 
         document_id = doc_writer.generate_doc("{}, {}".format(subject_config['name'], datetime.now().strftime("%B %Y")))
