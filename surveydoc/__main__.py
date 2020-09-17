@@ -35,6 +35,9 @@ def main(credentials_path, config_path):
         for idx, question in enumerate(survey_results['questions']):
             style = response_map.get(str(idx), "Ignore")
 
+            if style != 'Ignore':
+                doc_writer.insert_page_break()
+
             if style == 'DivergentBarChart':
                 image_path = divergent_bar_chart.generate(subject_config['name'], survey_results['answers']['Timestamp'], survey_results['answers'][question], question)
                 s3_path = s3.write_to_s3(image_path)

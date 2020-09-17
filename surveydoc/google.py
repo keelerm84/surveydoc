@@ -87,6 +87,11 @@ class DocWriter():
         self.insert_text("Comments")
         self.change_style("HEADING_2", "START")
 
+    def insert_page_break(self):
+        self.requests.append({"insertPageBreak": {"location": {"index": self.index}}})
+        self.last_index = self.index
+        self.index += 1
+
     def insert_text(self, text):
         content_length = len(text.encode('utf-16-le')) / 2 + 1  # Adding 1 for the newline
         self.requests.append({"insertText": {"location": {"index": self.index}, "text": f"{text}\n"}})
