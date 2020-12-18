@@ -46,6 +46,7 @@ class DocWriter():
         self.index = 1
         self.last_index = 1
         self.requests = []
+        self.breaks = []
 
         self.insert_text(subject)
         self.change_style("TITLE", "CENTER")
@@ -64,6 +65,12 @@ class DocWriter():
         document = self.service.documents().create(body={"title": title}).execute()
         self.service.documents().batchUpdate(documentId=document['documentId'], body={'requests': self.requests}).execute()
 
+        # The breaks are stored in the order that they should be inserted, but
+        # that will throw off the index count. So let's reverse them and then
+        # insert them backwards.
+        self.breaks.reverse()
+        self.service.documents().batchUpdate(documentId=document['documentId'], body={'requests': self.breaks}).execute()
+
         return document['documentId']
 
     def divergent_bar_chart(self, question, image_path):
@@ -75,21 +82,28 @@ class DocWriter():
 
         self.insert_text("Comments")
         self.change_style("HEADING_2", "START")
+        self.insert_text("")
         # TODO(mmk) We are going to have to generate something for the images in inline_objects
 
     def text_summary(self, question, answers):
         self.insert_text(question)
         self.change_style("HEADING_1", "START")
 
+        # TODO(mmk) If the answers have a newline in them, then they are being
+        # separated out into different bullet points. We need to convert the newlines to the line tabulation character (\u000b)
         self.insert_text("\n".join(answers))
         self.change_to_bullets()
 
         self.insert_text("Comments")
         self.change_style("HEADING_2", "START")
+        self.insert_text("")
+
+    def insert_page_break(self):
+        self.breaks.append({"insertPageBreak": {"location": {"index": self.index}}})
 
     def insert_text(self, text):
         content_length = len(text.encode('utf-16-le')) / 2 + 1  # Adding 1 for the newline
-        self.requests.append({"insertText": {"location": {"index": self.index}, "text": f"{text}\n"}})
+        self.requests.append({"insertText": {"endOfSegmentLocation": {"segmentId": ""}, "text": f"{text}\n"}})
         self.last_index = self.index
         self.index += content_length
 
@@ -100,7 +114,7 @@ class DocWriter():
         self.requests.append({"updateParagraphStyle": {"range": self.last_range(), "paragraphStyle": {"namedStyleType": style, "alignment": alignment}, "fields": "namedStyleType,alignment"}})
 
     def insert_image(self, image_path):
-        self.requests.append({"insertInlineImage": {"uri": image_path, "location": {"index": self.index}}})
+        self.requests.append({"insertInlineImage": {"uri": image_path, "endOfSegmentLocation": {"segmentId": ""}}})
         self.last_index = self.index
         self.index += 1
 
