@@ -83,15 +83,14 @@ class DocWriter():
         self.insert_text("Comments")
         self.change_style("HEADING_2", "START")
         self.insert_text("")
-        # TODO(mmk) We are going to have to generate something for the images in inline_objects
 
     def text_summary(self, question, answers):
         self.insert_text(question)
         self.change_style("HEADING_1", "START")
 
-        # TODO(mmk) If the answers have a newline in them, then they are being
-        # separated out into different bullet points. We need to convert the newlines to the line tabulation character (\u000b)
-        self.insert_text("\n".join(answers))
+        formatted = [answer.replace("\n", u"\u000b") for answer in answers]
+
+        self.insert_text("\n".join(formatted))
         self.change_to_bullets()
 
         self.insert_text("Comments")
