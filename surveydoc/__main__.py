@@ -4,6 +4,7 @@ from datetime import datetime
 from .google import authenticate, SurveyResultsRepository, DocWriter, DriveManager
 from .formatters import DivergentBarChart, RecentResponses
 from .aws import S3
+from progress.bar import Bar
 
 
 @click.command()
@@ -32,7 +33,7 @@ def main(credentials_path, config_path):
 
         response_map = config['response-map'][subject_config['response-map']]
 
-        for idx, question in enumerate(survey_results['questions']):
+        for idx, question in enumerate(Bar(subject_config['name']).iter(survey_results['questions'])):
             style = response_map.get(str(idx), "Ignore")
 
             if style != 'Ignore':
