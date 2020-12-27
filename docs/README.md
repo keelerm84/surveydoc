@@ -1,4 +1,4 @@
-# surveydoc
+# surveydoc ![Test](https://github.com/keelerm84/surveydoc/workflows/Test/badge.svg)
 
 I manage a team of developers. Periodically, we send out surveys asking
 team members to provide feedback on each other's performance and adherence
