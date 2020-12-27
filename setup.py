@@ -1,12 +1,27 @@
-from setuptools import setup
+from setuptools import find_packages, setup
+
+__version__ = '0.1.0'
 
 setup(
-    name = 'surveydoc',
-    version = '0.1.0',
-    packages = ['surveydoc'],
-    entry_points = {
+    name='surveydoc',
+    version=__version__,
+    packages=find_packages(),
+    python_requires=">=3.6",
+    entry_points={
         'console_scripts': [
-            'surveydoc = surveydoc.__main__:main'
+            'surveydoc=surveydoc.__main__:main'
         ]
-    }
+    },
+    install_requires=[
+        'boto3',
+        'click',
+        'google-api-python-client',
+        'google-auth-httplib2',
+        'google-auth-oauthlib',
+        'pandas',
+        'plotly',
+        'psutil',
+        'progress',
+        'tox',
+    ],
 )

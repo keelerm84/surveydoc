@@ -1,14 +1,17 @@
-import click
 import json
 from datetime import datetime
-from .google import authenticate, SurveyResultsRepository, DocWriter, DriveManager
-from .formatters import DivergentBarChart, RecentResponses
-from .aws import S3
+
+import click
 from progress.bar import Bar
+
+from .aws import S3
+from .formatters import DivergentBarChart, RecentResponses
+from .google import authenticate, SurveyResultsRepository, DocWriter, DriveManager
 
 
 @click.command()
-@click.option('--credentials_path', default='credentials.json', type=click.Path(), help='The path to your Google credentials.json file')
+@click.option('--credentials_path', default='credentials.json', type=click.Path(),
+              help='The path to your Google credentials.json file')
 @click.option('--config_path', default='config.json', type=click.File(), help='The path to your configuration file.')
 def main(credentials_path, config_path):
     credentials = authenticate(credentials_path)
@@ -40,17 +43,21 @@ def main(credentials_path, config_path):
                 doc_writer.insert_page_break()
 
             if style == 'DivergentBarChart':
-                image_path = divergent_bar_chart.generate(subject_config['name'], survey_results['answers']['Timestamp'], survey_results['answers'][question], question)
+                image_path = divergent_bar_chart.generate(subject_config['name'],
+                                                          survey_results['answers']['Timestamp'],
+                                                          survey_results['answers'][question])
                 s3_path = s3.write_to_s3(image_path)
                 doc_writer.divergent_bar_chart(question, s3_path)
             elif style == "TextSummary":
-                answers = recent_responses.filter(survey_results['answers']['Timestamp'], survey_results['answers'][question])
+                answers = recent_responses.filter(survey_results['answers']['Timestamp'],
+                                                  survey_results['answers'][question])
                 answers = answers.sample(frac=1)
 
                 doc_writer.text_summary(question, answers)
 
         document_id = doc_writer.generate_doc("{} {}".format(datetime.now().strftime("%Y-%m"), subject_config['name']))
         drive_manager.move_doc_to_folder(document_id, subject_config['drive-folder'])
+
 
 if __name__ == '__main__':
     main()

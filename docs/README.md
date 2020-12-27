@@ -9,7 +9,7 @@ This process has largely been manual and is time consuming. Hence, this
 python script which will read results from a Google Sheet and generate
 the appropriate Google Doc.
 
-![Example Doc Section](.github/example-doc-section.png)
+![Example Doc Section](example-doc-section.png)
 
 ## Getting Started
 
@@ -29,11 +29,11 @@ Create a virtualenv and install the required dependencies from the
 requirements.txt file.
 
 ```
-virtualenv --clear .env
+python -m venv .env
 . .env/bin/activate
-pip install -r requirements.txt
+pip install -e .
 yarn install
-python -m surveydoc
+surveydoc
 ```
 
 ### config.json
@@ -72,7 +72,7 @@ answers, and format the rest as a bulleted list.
 The DivergentBarChart option will generate [a divergent bar chart](https://peltiertech.com/diverging-stacked-bar-charts/),
 as shown below.
 
-![Example Divergent Bar Chart](.github/example-divergent-bar-chart.png)
+![Example Divergent Bar Chart](example-divergent-bar-chart.png)
 
 #### Google Sheet Data Format
 

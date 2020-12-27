@@ -1,11 +1,11 @@
 import os
-import json
-import pickle
 import os.path
-import pandas as pd
+import pickle
 from datetime import datetime
-from google_auth_oauthlib.flow import InstalledAppFlow
+
+import pandas as pd
 from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 
@@ -16,30 +16,30 @@ def authenticate(credentials_path):
         'https://www.googleapis.com/auth/spreadsheets.readonly'
     ]
 
-    creds = None
+    credentials = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
+            credentials = pickle.load(token)
 
     # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
+    if not credentials or not credentials.valid:
+        if credentials and credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 credentials_path, scopes)
-            creds = flow.run_local_server()
+            credentials = flow.run_local_server()
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+            pickle.dump(credentials, token)
 
-    return creds
+    return credentials
 
 
-class DocWriter():
+class DocWriter:
     def __init__(self, credentials, subject):
         self.service = build('docs', 'v1', credentials=credentials)
 
@@ -57,19 +57,29 @@ class DocWriter():
         self.insert_text("Overview and Explanation")
         self.change_style("HEADING_1", "START")
 
-        self.insert_text("Below, you will find several graphs visualizing the results of your most recent survey. Each question is broken out into a separate graph for easier comparison against previous survey results.")
-        self.insert_text("The graph we are using is a diverging bar chart. In this graph, anything to the right of the middle line is a positive response; anything to the left, negative. This is done to more accurately reflect the shifting sentiment of the team instead of hiding the details behind a contrived 'average' score.")
-        self.insert_text("Under each section, I have reserved some space for analysis, comments or action items that might arise from our one-on-one review of these results. Please make sure anything you want captured on this document has been recorded to your satisfaction.")
+        self.insert_text(
+            "Below, you will find several graphs visualizing the results of your most recent survey. Each question is "
+            "broken out into a separate graph for easier comparison against previous survey results.")
+        self.insert_text(
+            "The graph we are using is a diverging bar chart. In this graph, anything to the right of the middle line "
+            "is a positive response; anything to the left, negative. This is done to more accurately reflect the "
+            "shifting sentiment of the team instead of hiding the details behind a contrived 'average' score.")
+        self.insert_text(
+            "Under each section, I have reserved some space for analysis, comments or action items that might arise "
+            "from our one-on-one review of these results. Please make sure anything you want captured on this document "
+            "has been recorded to your satisfaction.")
 
     def generate_doc(self, title):
         document = self.service.documents().create(body={"title": title}).execute()
-        self.service.documents().batchUpdate(documentId=document['documentId'], body={'requests': self.requests}).execute()
+        self.service.documents().batchUpdate(documentId=document['documentId'],
+                                             body={'requests': self.requests}).execute()
 
         # The breaks are stored in the order that they should be inserted, but
         # that will throw off the index count. So let's reverse them and then
         # insert them backwards.
         self.breaks.reverse()
-        self.service.documents().batchUpdate(documentId=document['documentId'], body={'requests': self.breaks}).execute()
+        self.service.documents().batchUpdate(documentId=document['documentId'],
+                                             body={'requests': self.breaks}).execute()
 
         return document['documentId']
 
@@ -107,10 +117,14 @@ class DocWriter():
         self.index += content_length
 
     def change_to_bullets(self):
-        self.requests.append({"createParagraphBullets": {"range": self.last_range(), "bulletPreset": "BULLET_DISC_CIRCLE_SQUARE"}})
+        self.requests.append(
+            {"createParagraphBullets": {"range": self.last_range(), "bulletPreset": "BULLET_DISC_CIRCLE_SQUARE"}})
 
     def change_style(self, style, alignment):
-        self.requests.append({"updateParagraphStyle": {"range": self.last_range(), "paragraphStyle": {"namedStyleType": style, "alignment": alignment}, "fields": "namedStyleType,alignment"}})
+        self.requests.append({"updateParagraphStyle": {"range": self.last_range(),
+                                                       "paragraphStyle": {"namedStyleType": style,
+                                                                          "alignment": alignment},
+                                                       "fields": "namedStyleType,alignment"}})
 
     def insert_image(self, image_path):
         self.requests.append({"insertInlineImage": {"uri": image_path, "endOfSegmentLocation": {"segmentId": ""}}})
@@ -121,7 +135,7 @@ class DocWriter():
         return {"startIndex": self.last_index, "endIndex": self.index}
 
 
-class DriveManager():
+class DriveManager:
     def __init__(self, credentials):
         self.service = build('drive', 'v3', credentials=credentials)
 
@@ -132,13 +146,13 @@ class DriveManager():
         self.service.files().update(fileId=file_id, addParents=folder_id, removeParents=previous_parents).execute()
 
 
-class SurveyResultsRepository():
+class SurveyResultsRepository:
     def __init__(self, credentials):
         self.service = build('sheets', 'v4', credentials=credentials)
 
-    def get_survey_results(self, spreadsheetId, sheet, dataRange):
-        result = self.service.spreadsheets().values().get(spreadsheetId=spreadsheetId,
-                                                          range=f"{sheet}!{dataRange}").execute()
+    def get_survey_results(self, spreadsheet_id, sheet, data_range):
+        result = self.service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                          range=f"{sheet}!{data_range}").execute()
 
         values = result.get('values', [])
         questions = values[0]

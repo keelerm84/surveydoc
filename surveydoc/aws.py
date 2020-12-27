@@ -1,8 +1,9 @@
-import boto3
 import uuid
 
+import boto3
 
-class S3():
+
+class S3:
     def __init__(self, bucket, path):
         self.s3 = boto3.resource('s3')
         self.bucket = bucket

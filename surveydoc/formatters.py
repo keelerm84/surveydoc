@@ -1,17 +1,17 @@
+import os
 import tempfile
 import uuid
-import pandas as pd
 from datetime import datetime
+
+import pandas as pd
 import plotly.graph_objs as go
 import plotly.io as pio
-from string import punctuation
-import os
 
 pio.orca.config.executable = './node_modules/orca/bin/orca.js'
 
 
-class DivergentBarChart():
-    def generate(self, subject, timestamps, answers, question):
+class DivergentBarChart:
+    def generate(self, subject, timestamps, answers):
         answers = answers.apply(lambda x: int(x) if x != '' and x is not None else 0)
         answers = answers[answers > 0]
         frequencies = pd.crosstab(timestamps, answers, normalize='index')
@@ -43,8 +43,6 @@ class DivergentBarChart():
         if not os.path.exists(subject):
             os.mkdir(subject)
 
-        translation_table = str.maketrans("", "", punctuation)
-
         image_path = "{}.png".format(os.path.join(tempfile.mkdtemp(), str(uuid.uuid4())))
         pio.write_image(figure, image_path, format='png', scale=1, height=30 * len(frequencies))
 
@@ -57,12 +55,12 @@ class DivergentBarChart():
             orientation='h',
             marker=dict(
                 color=fill_color,
-                line=None
+                line=dict(width=0)
             )
         )
 
 
-class RecentResponses():
+class RecentResponses:
     def filter(self, timestamps, answers):
         indexes = timestamps.loc[timestamps == timestamps.iloc[-1]].index
         answers = answers[indexes]
