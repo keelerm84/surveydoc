@@ -4,51 +4,134 @@
 #
 #    pip-compile
 #
-appdirs==1.4.4            # via virtualenv
-boto3==1.12.26            # via surveydoc (setup.py)
-botocore==1.15.26         # via boto3, s3transfer
-cachetools==4.0.0         # via google-auth
-certifi==2019.11.28       # via requests
-chardet==3.0.4            # via requests
-click==7.1.1              # via surveydoc (setup.py)
-distlib==0.3.1            # via virtualenv
-docutils==0.15.2          # via botocore
-filelock==3.0.12          # via tox, virtualenv
-google-api-core==1.16.0   # via google-api-python-client
-google-api-python-client==1.8.0  # via surveydoc (setup.py)
-google-auth-httplib2==0.0.3  # via google-api-python-client, surveydoc (setup.py)
-google-auth-oauthlib==0.4.1  # via surveydoc (setup.py)
-google-auth==1.11.3       # via google-api-core, google-api-python-client, google-auth-httplib2, google-auth-oauthlib
-googleapis-common-protos==1.51.0  # via google-api-core
-httplib2==0.19.0          # via google-api-python-client, google-auth-httplib2
-idna==2.9                 # via requests
-jmespath==0.9.5           # via boto3, botocore
-numpy==1.18.2             # via pandas
-oauthlib==3.1.0           # via requests-oauthlib
-packaging==20.8           # via tox
-pandas==1.0.3             # via surveydoc (setup.py)
-plotly==4.5.4             # via surveydoc (setup.py)
-pluggy==0.13.1            # via tox
-progress==1.5             # via surveydoc (setup.py)
-protobuf==3.11.3          # via google-api-core, googleapis-common-protos
-psutil==5.7.0             # via surveydoc (setup.py)
-py==1.10.0                # via tox
-pyasn1-modules==0.2.8     # via google-auth
-pyasn1==0.4.8             # via pyasn1-modules, rsa
-pyparsing==2.4.7          # via packaging
-python-dateutil==2.8.1    # via botocore, pandas
-pytz==2019.3              # via google-api-core, pandas
-requests-oauthlib==1.3.0  # via google-auth-oauthlib
-requests==2.23.0          # via google-api-core, requests-oauthlib
-retrying==1.3.3           # via plotly
-rsa==4.7                  # via google-auth
-s3transfer==0.3.3         # via boto3
-six==1.14.0               # via google-api-core, google-api-python-client, google-auth, plotly, protobuf, python-dateutil, retrying, tox, virtualenv
-toml==0.10.2              # via tox
-tox==3.20.1               # via surveydoc (setup.py)
-uritemplate==3.0.1        # via google-api-python-client
-urllib3==1.25.8           # via botocore, requests
-virtualenv==20.2.2        # via tox
+appdirs==1.4.4
+    # via virtualenv
+boto3==1.17.62
+    # via surveydoc (setup.py)
+botocore==1.20.62
+    # via
+    #   boto3
+    #   s3transfer
+cachetools==4.2.2
+    # via google-auth
+certifi==2020.12.5
+    # via requests
+chardet==4.0.0
+    # via requests
+click==7.1.2
+    # via surveydoc (setup.py)
+distlib==0.3.1
+    # via virtualenv
+filelock==3.0.12
+    # via
+    #   tox
+    #   virtualenv
+google-api-core==1.26.3
+    # via google-api-python-client
+google-api-python-client==2.3.0
+    # via surveydoc (setup.py)
+google-auth-httplib2==0.1.0
+    # via
+    #   google-api-python-client
+    #   surveydoc (setup.py)
+google-auth-oauthlib==0.4.4
+    # via surveydoc (setup.py)
+google-auth==1.30.0
+    # via
+    #   google-api-core
+    #   google-api-python-client
+    #   google-auth-httplib2
+    #   google-auth-oauthlib
+googleapis-common-protos==1.53.0
+    # via google-api-core
+httplib2==0.19.1
+    # via
+    #   google-api-python-client
+    #   google-auth-httplib2
+idna==2.10
+    # via requests
+jmespath==0.10.0
+    # via
+    #   boto3
+    #   botocore
+numpy==1.20.2
+    # via pandas
+oauthlib==3.1.0
+    # via requests-oauthlib
+packaging==20.9
+    # via
+    #   google-api-core
+    #   tox
+pandas==1.2.4
+    # via surveydoc (setup.py)
+plotly==4.14.3
+    # via surveydoc (setup.py)
+pluggy==0.13.1
+    # via tox
+progress==1.5
+    # via surveydoc (setup.py)
+protobuf==3.15.8
+    # via
+    #   google-api-core
+    #   googleapis-common-protos
+psutil==5.8.0
+    # via surveydoc (setup.py)
+py==1.10.0
+    # via tox
+pyasn1-modules==0.2.8
+    # via google-auth
+pyasn1==0.4.8
+    # via
+    #   pyasn1-modules
+    #   rsa
+pyparsing==2.4.7
+    # via
+    #   httplib2
+    #   packaging
+python-dateutil==2.8.1
+    # via
+    #   botocore
+    #   pandas
+pytz==2021.1
+    # via
+    #   google-api-core
+    #   pandas
+requests-oauthlib==1.3.0
+    # via google-auth-oauthlib
+requests==2.25.1
+    # via
+    #   google-api-core
+    #   requests-oauthlib
+retrying==1.3.3
+    # via plotly
+rsa==4.7.2
+    # via google-auth
+s3transfer==0.4.2
+    # via boto3
+six==1.15.0
+    # via
+    #   google-api-core
+    #   google-api-python-client
+    #   google-auth
+    #   google-auth-httplib2
+    #   plotly
+    #   protobuf
+    #   python-dateutil
+    #   retrying
+    #   tox
+    #   virtualenv
+toml==0.10.2
+    # via tox
+tox==3.23.0
+    # via surveydoc (setup.py)
+uritemplate==3.0.1
+    # via google-api-python-client
+urllib3==1.26.4
+    # via
+    #   botocore
+    #   requests
+virtualenv==20.4.4
+    # via tox
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
