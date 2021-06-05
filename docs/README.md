@@ -1,4 +1,7 @@
-# surveydoc ![build](https://github.com/keelerm84/surveydoc/workflows/build/badge.svg)
+![build](https://github.com/keelerm84/surveydoc/workflows/build/badge.svg)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5e1214c487d709f5d777/maintainability)](https://codeclimate.com/github/keelerm84/surveydoc/maintainability)
+
+# surveydoc
 
 I manage a team of developers. Periodically, we send out surveys asking
 team members to provide feedback on each other's performance and adherence
