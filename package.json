@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "electron": "^11.5.0",
+    "electron": "^13.6.6",
     "orca": "^1.2.1"
   }
 }
