@@ -54,7 +54,7 @@ jmespath==0.10.0
     # via
     #   boto3
     #   botocore
-numpy==1.21.0
+numpy==1.22.0
     # via pandas
 oauthlib==3.1.0
     # via requests-oauthlib
