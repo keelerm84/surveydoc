@@ -6,7 +6,7 @@ setup(
     name='surveydoc',
     version=__version__,
     packages=find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     entry_points={
         'console_scripts': [
             'surveydoc=surveydoc.__main__:main'
