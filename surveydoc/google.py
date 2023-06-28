@@ -40,7 +40,7 @@ def authenticate(credentials_path):
 
 
 class DocWriter:
-    def __init__(self, credentials, subject):
+    def __init__(self, credentials, subject, explanations):
         self.service = build('docs', 'v1', credentials=credentials)
 
         self.index = 1
@@ -57,17 +57,9 @@ class DocWriter:
         self.insert_text("Overview and Explanation")
         self.change_style("HEADING_1", "START")
 
-        self.insert_text(
-            "Below, you will find several graphs visualizing the results of your most recent survey. Each question is "
-            "broken out into a separate graph for easier comparison against previous survey results.")
-        self.insert_text(
-            "The graph we are using is a diverging bar chart. In this graph, anything to the right of the middle line "
-            "is a positive response; anything to the left, negative. This is done to more accurately reflect the "
-            "shifting sentiment of the team instead of hiding the details behind a contrived 'average' score.")
-        self.insert_text(
-            "Under each section, I have reserved some space for analysis, comments or action items that might arise "
-            "from our one-on-one review of these results. Please make sure anything you want captured on this document "
-            "has been recorded to your satisfaction.")
+        for explanation in explanations:
+            self.insert_text(explanation)
+            self.insert_text("")
 
     def generate_doc(self, title):
         document = self.service.documents().create(body={"title": title}).execute()
