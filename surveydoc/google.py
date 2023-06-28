@@ -136,7 +136,7 @@ class DriveManager:
         uploaded_file = self.service.files().get(fileId=file_id, fields='parents').execute()
         previous_parents = ','.join(uploaded_file['parents'])
 
-        self.service.files().update(fileId=file_id, addParents=folder_id, removeParents=previous_parents).execute()
+        self.service.files().update(fileId=file_id, addParents=folder_id, removeParents=previous_parents, supportsAllDrives=True).execute()
 
 
 class SurveyResultsRepository:
