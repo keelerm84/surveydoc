@@ -17,7 +17,13 @@
     },
     "response-map": {
         "standard": {
-            "1": "DivergentBarChart"
+            "survey-explanation": [
+                "Insert paragraph explanations as a separate item in this list."
+            ],
+            "mappings": {
+                "1": "DivergentBarChart"
+                "2": "TextSummary"
+            }
         }
     }
 }

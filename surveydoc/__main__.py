@@ -26,7 +26,7 @@ def main(credentials_path, config_path):
     s3 = S3(config['s3']['bucket'], config['s3']['directory'])
 
     for subject_config in config['subjects']:
-        doc_writer = DocWriter(credentials, subject_config['name'])
+        response_map = config['response-map'][subject_config['response-map']]
 
         survey_results = survey_results_repository.get_survey_results(
             subject_config['spreadsheet']['id'],
@@ -34,10 +34,14 @@ def main(credentials_path, config_path):
             subject_config['spreadsheet']['range']
         )
 
-        response_map = config['response-map'][subject_config['response-map']]
+        if len(survey_results['answers']) == 0:
+            print("Skipping " + subject_config['name'] + ", no survey responses.")
+            continue
+
+        doc_writer = DocWriter(credentials, subject_config['name'], response_map['survey-explanation'])
 
         for idx, question in enumerate(Bar(subject_config['name']).iter(survey_results['questions'])):
-            style = response_map.get(str(idx), "Ignore")
+            style = response_map['mappings'].get(str(idx), "Ignore")
 
             if style != 'Ignore':
                 doc_writer.insert_page_break()
