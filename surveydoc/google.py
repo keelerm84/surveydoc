@@ -1,6 +1,7 @@
 import os
 import os.path
 import pickle
+import dateutil.parser
 from datetime import datetime
 
 import pandas as pd
@@ -150,6 +151,6 @@ class SurveyResultsRepository:
         questions = values[0]
         responses = pd.DataFrame(data=values[1:], columns=questions)
         responses["Timestamp"] = responses["Timestamp"].apply(
-            lambda timestamp: datetime.strptime(timestamp, "%B %Y").strftime("%Y%m"))
+            lambda timestamp: dateutil.parser.parse(timestamp).strftime("%Y%m"))
 
         return {'questions': questions, 'answers': responses}
