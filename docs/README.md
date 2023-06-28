@@ -26,6 +26,10 @@ reference.
 4. Create an S3 bucket for temporary file storage (make sure your default
 profile has write access to this bucket).
 
+When you first run the application you will be prompted to authenticate with
+Google. If you get an error (invalid grant), you might need to delete the 
+token.pickle file and run the application again to regenerate a new file.
+
 ### Installation
 
 Create a virtualenv and install the required dependencies from the
